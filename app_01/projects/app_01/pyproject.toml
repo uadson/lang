@@ -1,0 +1,14 @@
+[project]
+name = "app_translate"
+version = "0.1.0"
+description = "Translater"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.115.12",
+    "langchain[google-genai]>=0.3.25",
+    "python-decouple>=3.8",
+]
+
+[tool.uv.workspace]
+members = ["app_01/projects/app_01"]
