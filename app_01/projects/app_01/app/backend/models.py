@@ -19,3 +19,18 @@ class ChatResponseBase(BaseModel):
 
 class ChatResponse(ChatResponseBase):
     response_id: uuid.UUID | None = Field(default_factory=uuid.uuid4)
+
+
+class LanguageRequestBase(BaseModel):
+    created_at: datetime = Field(default_factory=datetime.now)
+    name: str
+
+
+class LanguageRequest(LanguageRequestBase):
+    language_id: uuid.UUID | None = Field(default_factory=uuid.uuid4)
+
+
+class LanguageResponse(BaseModel):
+    language_id: uuid.UUID | None
+    name: str | None
+    created_at: datetime | None
