@@ -8,6 +8,7 @@ dependencies = [
     "fastapi[standard]>=0.115.12",
     "langchain[google-genai]>=0.3.25",
     "python-decouple>=3.8",
+    "sqlmodel>=0.0.24",
 ]
 
 [tool.uv.workspace]

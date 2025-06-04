@@ -1,4 +1,4 @@
-from config import settings
+from backend.core.config import settings
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -10,7 +10,7 @@ MODEL_PROVIDER = settings.MODEL_PROVIDER
 class Translater:
     def __init__(self):
         self.llm_model = self.load_model()
-        self.system_template = "You are a helpful assistant that translates from {input_language} to {output_language}."
+        self.system_template = "You are a helpful assistant that translates from {source_language} to {target_language}."
 
     def load_model(self):
         model = init_chat_model(
@@ -20,14 +20,14 @@ class Translater:
 
         return model
 
-    def translate(self, text, input_language, output_language):
+    def translate(self, text, source_language, target_language):
         prompt_template = ChatPromptTemplate.from_messages(
             [("system", self.system_template), ("human", "{text}")]
         )
         prompt = prompt_template.invoke(
             {
-                "input_language": input_language,
-                "output_language": output_language,
+                "source_language": source_language,
+                "target_language": target_language,
                 "text": text,
             }
         )

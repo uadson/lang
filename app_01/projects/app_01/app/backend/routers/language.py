@@ -1,22 +1,27 @@
-from backend.models import LanguageRequest, LanguageResponse
-from backend.db import crud
-from fastapi import APIRouter, status, HTTPException
+from backend.models import language as model
+from backend.db.crud import language as crud
+from backend.db.database import get_session
+from fastapi import APIRouter, status, HTTPException, Depends
+from sqlmodel import Session
 
 router = APIRouter(prefix="/languages", tags=["Languages"])
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=LanguageResponse)
-async def create(request: LanguageRequest):
-    language_name = request.name.strip()
-    if not language_name:
+@router.post(
+    "/", status_code=status.HTTP_201_CREATED, response_model=model.LanguageResponse
+)
+def create(language: model.LanguageCreate, db: Session = Depends(get_session)):
+    try:
+        return crud.create_language(db, language)
+    except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Nome do idioma não pode ser vazio",
+            detail=f"Erro ao tentar registrar idioma: {e}",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    language = await crud.create_language(language_name)
-    return language
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=list[LanguageResponse])
-async def list_all():
-    return await crud.get_languages()
+@router.get(
+    "/", status_code=status.HTTP_200_OK, response_model=list[model.LanguageResponse]
+)
+def list_all(db: Session = Depends(get_session)):
+    return crud.list_languages(db)
