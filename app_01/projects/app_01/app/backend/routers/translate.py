@@ -15,13 +15,13 @@ async def translate_text(
     request: model.TranslateRequest, db: Session = Depends(get_session)
 ):
     text = request.text.strip()
-    source_language = db.exec(
+
+    source = db.exec(
         select(model_language.Language).where(
             model_language.Language.id == request.source_language_id
         )
     )
-
-    print(source_language)
+    source_language = source.one_or_none()
 
     target_language = db.exec(
         select(model_language.Language).where(
@@ -29,16 +29,20 @@ async def translate_text(
         )
     )
 
-    if not text or not source_language or not target_language:
+    target_language = target_language.one_or_none()
+
+    if not text or not source_language.name or not target_language.name:
         raise HTTPException(
             detail="Campos de texto, idioma de origem e idioma de destino não podem estar vazios",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    translated_text = translater.translate(text, source_language, target_language)
+    translated_text = translater.translate(
+        text, str(source_language.name), str(target_language.name)
+    )
 
     return model.TranslateResponse(
         translated_text=translated_text,
-        source_language=source_language,
-        target_language=target_language,
+        source_language=source_language.name,
+        target_language=target_language.name,
     )
