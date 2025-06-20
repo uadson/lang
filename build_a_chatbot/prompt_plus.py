@@ -21,6 +21,17 @@ class State(TypedDict):
     language: str
 
 
+# Prompt
+prompt_template = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "Você é um assistente prestativo. Responda a todas as perguntas com o máximo de sua capacidade em {language}.",
+        ),
+        MessagesPlaceholder(variable_name="messages"),
+    ]
+)
+
 # Gerênciamento do histórico de conversação
 trimmer = trim_messages(
     max_tokens=65,
@@ -46,17 +57,6 @@ messages = [
 ]
 
 trimmer.invoke(messages)
-
-# Prompt
-prompt_template = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            "Você é um assistente prestativo. Responda a todas as perguntas com o máximo de sua capacidade em {language}.",
-        ),
-        MessagesPlaceholder(variable_name="messages"),
-    ]
-)
 
 # Define um novo grafo
 workflow = StateGraph(state_schema=State)
